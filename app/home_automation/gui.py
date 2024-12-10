@@ -5,7 +5,7 @@ from tkinter import messagebox
 import threading
 import time
 from datetime import datetime
-from serial_connection import SerialConnection
+from home_automation.serial_connection import SerialConnection
 
 
 class GUI:
