@@ -28,7 +28,6 @@ class GUI:
         base_dir = base_dir.split("home-automation")[0]
         images_dir = os.path.join(base_dir, "images")
 
-        # Load images
         self.images = {
             "door_open": ctk.CTkImage(Image.open(os.path.join(images_dir, "open_door.png")), size=(150, 150)),
             "door_closed": ctk.CTkImage(Image.open(os.path.join(images_dir, "closed_door.png")), size=(150, 150)),
@@ -39,17 +38,15 @@ class GUI:
             "outlet_closed": ctk.CTkImage(Image.open(os.path.join(images_dir, "outlet_close.jpeg")), size=(150, 150)),
         }
 
-        # Configure grid layout
+        
         self.root.columnconfigure(0, weight=1)
         self.root.columnconfigure(1, weight=1)
         self.root.columnconfigure(2, weight=1)
-        self.root.columnconfigure(3, weight=1)  # Added column for the outlet
-        self.root.rowconfigure(0, weight=1)  # Make the content stretch vertically
+        self.root.columnconfigure(3, weight=1)  
+        self.root.rowconfigure(0, weight=1)  
 
-        # Create GUI
         self.create_widgets()
 
-        # Start background tasks
         self.running = True
         self.start_monitoring()
 
@@ -122,17 +119,28 @@ class GUI:
         threading.Thread(target=self.monitor_temperature_and_door_and_lamp, daemon=True).start()
 
     def monitor_temperature_and_door_and_lamp(self):
+        temperature_value = ""
         while self.running:
             # Mock temperature and door status updates
-            self.temperature = SerialConnection.get_temperature(self.serr)
-            current_door_status = SerialConnection.get_door_status(self.serr)
-            current_lamp_status = SerialConnection.get_lamp_status(self.serr)
+            message = SerialConnection.get_message(self.serr)
+            if len(message) > 1:
+                message = message.split("_")[0]
+                temperature_value = message.split("_")[1]
+
+            if message == 'T':
+                self.temperature = temperature_value
+            elif message == 'O':
+                self.lamp_status = "ON"
+            elif message == 'F':
+                self.lamp_status = "OFF"
+            elif message == 'D':
+                self.door_status = "Open"
+            elif message == 'C':
+                self.door_status = "Closed"
             previous_door_status = self.door_status
-            self.door_status = "Open" if current_door_status else "Closed"
             if self.door_status != previous_door_status:
                 self.save_door_history(self.door_status)
 
-            self.lamp_status = "ON" if current_lamp_status else "OFF"
 
             # Update the UI
             self.update_temperature_label()
@@ -144,7 +152,7 @@ class GUI:
     def update_temperature_label(self):
         self.temp_label.configure(text=f"Temperature: {self.temperature}°C")
 
-    def update_door_status_label(self):clear
+    def update_door_status_label(self):
         self.door_label.configure(text=f"Door Status: {self.door_status}")
         if self.door_status == "Open":
             self.door_image_label.configure(image=self.images["door_open"])
@@ -247,10 +255,3 @@ class GUI:
         self.running = False
         self.save_door_history_to_file()
 
-
-# Main Application
-if __name__ == "__main__":
-    root = ctk.CTk()
-    app = GUI(root)
-    root.protocol("WM_DELETE_WINDOW", lambda: (app.stop_monitoring(), root.destroy()))  # Stop threads on close
-    root.mainloop()

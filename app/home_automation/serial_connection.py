@@ -19,27 +19,16 @@ class SerialConnection:
     
     @staticmethod
     def turn_lamp_on(ser):
-        ser.write(b'o')
+        ser.write(b'O')
     
     @staticmethod
     def turn_lamp_off(ser):
-        ser.write(b'f')
+        ser.write(b'F')
     
-    @staticmethod
-    def get_temperature(ser):
-        ser.write(b't')
-        return ser.readline().decode().strip()
-    
-    @staticmethod
-    def get_door_status(ser):
-        ser.write(b'd')
-        return ser.readline().decode().strip()
-    
-    @staticmethod
-    def get_lamp_status(ser):
-        ser.write(b's')  # 's' is a command to get the lamp's status
-        status = ser.readline().decode().strip()
-        return "ON" if status == "1" else "OFF"
+    @staticmethod 
+    def get_message(ser):
+        message = ser.readline().decode().strip() # T -> Temperature, O -> Lamp On, F -> Lamp Off, D -> Door Open, C -> Door Close
+        return message
     
     @staticmethod
     def close_outlet(ser):
