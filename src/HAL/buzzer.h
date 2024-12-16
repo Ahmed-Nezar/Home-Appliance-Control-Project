@@ -16,7 +16,7 @@
 #define BUZZER_ON BUZZER_PIN
 #define BUZZER_OFF 0
 
-void buzzer_init(void);
+void buzzer_init(void (*BUZZER_Interruptfunc)(void));
 void buzzer_control(uint8_t state);
 
 #endif

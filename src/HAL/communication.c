@@ -148,9 +148,12 @@ void comm_send_byte(uint8_t data) {
 }
 
 void comm_send_string(char *data) {
-    while(*data) {
-        comm_send_byte(*data++);
+    while(*data != '#') {
+        comm_send_byte(*data);
+        data++;
     }
+    comm_send_byte('#');
+    comm_send_byte('\n');
 }
 
 // uint8_t comm_receive(void) {

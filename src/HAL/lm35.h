@@ -15,6 +15,6 @@
 #define LM35_PIN GPIO_PIN_3
 
 void lm35_init(void);
-uint32_t lm35_get_temperature(void);
+uint8_t lm35_get_temperature(void);
 
 #endif

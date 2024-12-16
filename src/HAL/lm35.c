@@ -11,8 +11,7 @@ void lm35_init(void) {
     ADCIntClear(ADC0_BASE, 3);
 }
 
-uint32_t lm35_get_temperature(void) {
-    // get temperature without interrupts
+uint8_t lm35_get_temperature(void) {
     uint32_t ui32TempValueC;
     uint32_t ui32ADC0Value[4];
     ADCProcessorTrigger(ADC0_BASE, 3);
