@@ -156,7 +156,6 @@ class GUI:
 
     def update_temperature_label(self):
         if self.hot_temp > 25:
-            self.temp_label.configure(fg="red")
             self.temp_label.configure(text=f"Temperature: {self.hot_temp}°C, take care very hot")
         else:
             self.temp_label.configure(text=f"Temperature: {self.temperature}°C")
