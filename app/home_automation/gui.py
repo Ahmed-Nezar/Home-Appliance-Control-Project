@@ -22,6 +22,7 @@ class GUI:
         self.door_history = self.load_door_history()  # Load door history from file
         self.door_status = "Closed"  # Door state: "Open" or "Closed"
         self.outlet_status = "Closed"  # Outlet state: "Open" or "Closed"
+        self.temperature = "" # Initial Tempreature Value
         self.serr = SerialConnection.init()
 
         base_dir = os.path.dirname(os.path.abspath(__file__))
