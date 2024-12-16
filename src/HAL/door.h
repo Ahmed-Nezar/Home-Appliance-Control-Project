@@ -9,11 +9,16 @@
 #include "driverlib/rom.h"
 #include "driverlib/sysctl.h"
 
-#define DOOR_PERIPH SYSCTL_PERIPH_GPIOF
-#define DOOR_PORT GPIO_PORTF_BASE
-#define DOOR_PIN GPIO_PIN_4
+#define DOOR_PERIPH SYSCTL_PERIPH_GPIOB
+#define DOOR_PORT GPIO_PORTB_BASE
+#define DOOR_PIN GPIO_PIN_0
 
-void door_init(void);
+enum DOOR_STATUS {
+    DOOR_CLOSED = 0,
+    DOOR_OPENED = 1
+};
+
+void door_init(void (*door_callback)(void));
 uint8_t door_status(void);
 
 #endif
