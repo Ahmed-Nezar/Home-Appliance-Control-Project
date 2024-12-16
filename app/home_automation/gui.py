@@ -126,8 +126,10 @@ class GUI:
             previous_door_status = self.door_status
             message = SerialConnection.get_message(self.serr)
             if len(message) > 1:
-                message = message.split("_")[0]
+                message = message.split("#")[0]
                 temperature_value = message.split("_")[1]
+                temperature_value = ord(temperature_value[0]) - ord('0')
+                message = message.split("_")[0]
 
             if message == 'T':
                 self.temperature = temperature_value
