@@ -153,7 +153,11 @@ class GUI:
             time.sleep(1)  # Update every second
 
     def update_temperature_label(self):
-        self.temp_label.configure(text=f"Temperature: {self.temperature}°C")
+        if self.temperature > 25:
+            self.temp_label.configure(fg="red")
+            self.temp_label.configure(text=f"Temperature: {self.temperature}°C, take care very hot")
+        else:
+            self.temp_label.configure(text=f"Temperature: {self.temperature}°C")
 
     def update_door_status_label(self):
         self.door_label.configure(text=f"Door Status: {self.door_status}")
