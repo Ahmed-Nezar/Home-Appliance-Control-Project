@@ -125,8 +125,8 @@ class GUI:
             # Mock temperature and door status updates
             previous_door_status = self.door_status
             message = SerialConnection.get_message(self.serr)
-            if len(message) > 1:
-                message = message.split("#")[0]
+            message = message.split("#")[0]
+            if len(message) > 2:
                 temperature_value = message.split("_")[1]
                 temperature_value = ord(temperature_value[0]) - ord('0')
                 message = message.split("_")[0]
