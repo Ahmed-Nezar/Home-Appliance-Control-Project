@@ -23,6 +23,7 @@ class GUI:
         self.door_status = "Closed"  # Door state: "Open" or "Closed"
         self.outlet_status = "Closed"  # Outlet state: "Open" or "Closed"
         self.temperature = "" # Initial Tempreature Value
+        self.hot_temp = 25
         self.serr = SerialConnection.init()
 
         base_dir = os.path.dirname(os.path.abspath(__file__))
@@ -133,6 +134,7 @@ class GUI:
 
             if message == 'T':
                 self.temperature = temperature_value
+                self.hot_temp = temperature_value
             elif message == 'O':
                 self.lamp_status = "ON"
             elif message == 'F':
@@ -153,9 +155,9 @@ class GUI:
             time.sleep(1)  # Update every second
 
     def update_temperature_label(self):
-        if self.temperature > 25:
+        if self.hot_temp > 25:
             self.temp_label.configure(fg="red")
-            self.temp_label.configure(text=f"Temperature: {self.temperature}°C, take care very hot")
+            self.temp_label.configure(text=f"Temperature: {self.hot_temp}°C, take care very hot")
         else:
             self.temp_label.configure(text=f"Temperature: {self.temperature}°C")
 
