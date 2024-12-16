@@ -123,6 +123,7 @@ class GUI:
         temperature_value = ""
         while self.running:
             # Mock temperature and door status updates
+            previous_door_status = self.door_status
             message = SerialConnection.get_message(self.serr)
             if len(message) > 1:
                 message = message.split("_")[0]
@@ -138,7 +139,6 @@ class GUI:
                 self.door_status = "Open"
             elif message == 'C':
                 self.door_status = "Closed"
-            previous_door_status = self.door_status
             if self.door_status != previous_door_status:
                 self.save_door_history(self.door_status)
 
