@@ -5,7 +5,9 @@ from tkinter import messagebox
 import threading
 import time
 from datetime import datetime
+import pygame
 from home_automation.serial_connection import SerialConnection
+from home_automation.utils import Utils
 
 
 class GUI:
@@ -118,39 +120,44 @@ class GUI:
             file.writelines(self.door_history)
 
     def start_monitoring(self):
-        threading.Thread(target=self.monitor_temperature_and_door_and_lamp, daemon=True).start()
-
-    def monitor_temperature_and_door_and_lamp(self):
+        threading.Thread(target=self.monitor_door, daemon=True).start()
+        threading.Thread(target=self.monitor_temperature, daemon=True).start()
+    
+    def monitor_temperature(self):
         temperature_value = ""
+        while self.running:
+            # Mock temperature and door status updates
+            message = SerialConnection.get_message(self.serr)
+            message = message.split("#")
+            message = [i for i in message if Utils.check_is_temperature(i)]
+            
+            for temperature_message in message:
+                temperature_value = temperature_message.split("_")[1]
+                temperature_value = ord(temperature_value[0]) - ord('0')
+
+                self.temperature = temperature_value
+                self.hot_temp = temperature_value
+
+                self.update_temperature_label()
+
+    
+    def monitor_door(self):
         while self.running:
             # Mock temperature and door status updates
             previous_door_status = self.door_status
             message = SerialConnection.get_message(self.serr)
-            message = message.split("#")[0]
-            if len(message) > 2:
-                temperature_value = message.split("_")[1]
-                temperature_value = ord(temperature_value[0]) - ord('0')
-                message = message.split("_")[0]
-
-            if message == 'T':
-                self.temperature = temperature_value
-                self.hot_temp = temperature_value
-            elif message == 'O':
-                self.lamp_status = "ON"
-            elif message == 'F':
-                self.lamp_status = "OFF"
-            elif message == 'D':
-                self.door_status = "Open"
-            elif message == 'C':
-                self.door_status = "Closed"
-            if self.door_status != previous_door_status:
-                self.save_door_history(self.door_status)
-
-
-            # Update the UI
-            self.update_temperature_label()
-            self.update_door_status_label()
-            self.update_lamp_status_label()
+            message = message.split("#")
+            message = [i for i in message if Utils.check_is_door(i)] 
+            for door_message in message:
+                if door_message == 'D':
+                    self.door_status = "Open"
+                if door_message == 'C':
+                    self.door_status = "Closed"
+                if self.door_status != previous_door_status:
+                    self.save_door_history(self.door_status)
+    
+                # Update the UI
+                self.update_door_status_label()
 
             time.sleep(1)  # Update every second
 
