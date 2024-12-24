@@ -133,7 +133,7 @@ class GUI:
             
             for temperature_message in message:
                 temperature_value = temperature_message.split("_")[1]
-                temperature_value = ord(temperature_value[0]) - ord('0')
+                temperature_value = ord(temperature_value) - ord('0')
 
                 self.temperature = temperature_value
                 self.hot_temp = temperature_value
