@@ -129,29 +129,32 @@ class GUI:
             message = message.split("#")
             temperature_messages = []                
             door_messages = []
-            
-            if len(message) == 0:
-                continue
 
             if Utils.check_is_door(message[0]):
                 door_messages.append(message[0])
             elif Utils.check_is_temperature(message[0]):
                 temperature_messages.append(message[0])
             
-            door_message = door_messages[-1]
-            if door_message == 'D':
-                self.door_status = "Open"
-            if door_message == 'C':
-                self.door_status = "Closed"
-            if self.door_status != previous_door_status:
-                self.save_door_history(self.door_status)
-    
-            self.update_door_status_label()
+            try:
+                door_message = door_messages[-1]
+                if door_message == 'D':
+                    self.door_status = "Open"
+                if door_message == 'C':
+                    self.door_status = "Closed"
+                if self.door_status != previous_door_status:
+                    self.save_door_history(self.door_status)
+        
+                self.update_door_status_label()
+            except:
+                pass
 
-            temperature_value = temperature_messages[-1].split("_")[1]
-            temperature_value = ord(temperature_value) - ord('0')
-            self.temperature = temperature_value
-            self.update_temperature_label()
+            try:  
+                temperature_value = temperature_messages[-1].split("_")[1]
+                temperature_value = ord(temperature_value) - ord('0')
+                self.temperature = temperature_value
+                self.update_temperature_label()
+            except:
+                pass
             
 
 
