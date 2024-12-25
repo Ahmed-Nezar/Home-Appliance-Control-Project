@@ -51,17 +51,18 @@
 #include "inc/hw_ints.h"
 
 #define COMM_PERIPH SYSCTL_PERIPH_UART0
-#define COMM_PORT GPIO_PORTA_BASE
+#define COMM_PERIPH_GPIO SYSCTL_PERIPH_GPIOA
+#define COMM_BASE UART0_BASE
+#define COMM_BASE_GPIO GPIO_PORTA_BASE
+
+#define COMM_INT INT_UART0
+
 #define COMM_PIN_TX GPIO_PIN_1
 #define COMM_PIN_RX GPIO_PIN_0
-
-// #define manga 0x00000001
-// #define manga2 0x00000401
+#define COMM_BAUDRATE 9600
 
 void comm_init(void (*UART0_callback)(void));
 void comm_send_byte(uint8_t data);
-// uint8_t comm_receive(void);
 void comm_send_string(char *data);
-// void comm_receive_string(char *data, uint8_t length);
 
 #endif

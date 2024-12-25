@@ -9,59 +9,14 @@
 #include "HAL/buzzer.h"
 
 char g_ui8UART0Data;
-char door = DOOR_CLOSED;
+char g_door = DOOR_CLOSED;
 char g_lamp = LAMP_OFF;
 
-void UART0_InterruptHandle(void){
-    uint32_t ui32Status;
-    ui32Status = UARTIntStatus(UART0_BASE, true);
-
-    while(UARTCharsAvail(UART0_BASE)) {
-        g_ui8UART0Data = UARTCharGet(UART0_BASE);
-    }
-    UARTIntClear(UART0_BASE, ui32Status);
-}
-
-void Door_InterruptHandle(void) {
-    if (door == DOOR_CLOSED) {
-        comm_send_string("D#");
-        // comm_send_byte('D');
-        door = DOOR_OPENED;
-    } else {
-        comm_send_string("C#");
-        // comm_send_byte('C');
-        door = DOOR_CLOSED;
-    }
-    SysCtlDelay(1000000);
-    GPIOIntClear(DOOR_PORT, DOOR_PIN);
-}
-
-void Lamp_InterruptHandle(){
-    SysCtlDelay(1000000);
-    g_lamp = !LAMP_status();
-    GPIOIntClear(LAMP_PORT, LAMP_PIN);
-
-}
-
-void BUZZER_InterruptHandle(void) {
-    static char counter = 0;
-    if (counter == 2) {
-    char temperature[5] = "T_0#";
-    temperature[2] = lm35_get_temperature() + '0';
-    comm_send_string(temperature);
-    if ((temperature[2] - '0') > 25) {
-        buzzer_control(BUZZER_ON);
-    } else {
-        buzzer_control(BUZZER_OFF);
-    }
-        counter = 0;
-        SysCtlDelay(500000);
-
-    }
-    else {
-        counter++;
-    }
-}
+void delayMS(uint32_t ms);
+void UART0_InterruptHandle(void);
+void Door_InterruptHandle(void);
+void Lamp_InterruptHandle(void);
+void BUZZER_InterruptHandle(void);
 
 int main()
 {   
@@ -82,19 +37,7 @@ int main()
 
     while(1)
     {
-        if (g_ui8UART0Data == 0)
-        {
-            // temperature[2] = lm35_get_temperature() + '0';
-            // SysCtlDelay(10000000);
-
-            // comm_send_string(temperature);
-            
-
-            lamp_state = g_lamp ^ lamp_uart;
-            relay_control(RELAY_1, lamp_state);
-            relay_control(RELAY_2, outlet_uart);
-        }
-        else
+        if (g_ui8UART0Data != 0)
         {
             switch (g_ui8UART0Data)
             {
@@ -114,7 +57,59 @@ int main()
             }
             g_ui8UART0Data = 0;
         }
+        else
+        {
+            lamp_state = g_lamp ^ lamp_uart;
+            relay_control(RELAY_1, lamp_state);
+            relay_control(RELAY_2, outlet_uart);
+        }
 
     }
   return 0;
+}
+\
+void delayMS(uint32_t ms) {
+    SysCtlDelay( (SysCtlClockGet()/(3*1000))*ms );
+}
+
+void UART0_InterruptHandle(void){
+    uint32_t ui32Status;
+    ui32Status = UARTIntStatus(UART0_BASE, true);
+
+    while(UARTCharsAvail(UART0_BASE)) {
+        g_ui8UART0Data = UARTCharGet(UART0_BASE);
+    }
+    UARTIntClear(UART0_BASE, ui32Status);
+}
+
+void Door_InterruptHandle(void) {    
+    delayMS(50);
+    g_door = door_status();
+    if (g_door == DOOR_CLOSED) {
+        comm_send_string("D#");
+        g_door = DOOR_OPENED;
+    } else {
+        comm_send_string("C#");
+        g_door = DOOR_CLOSED;
+    }
+    GPIOIntClear(DOOR_PORT, DOOR_PIN);
+}
+
+void Lamp_InterruptHandle(){
+    delayMS(50);
+    g_lamp = !LAMP_status();
+    GPIOIntClear(LAMP_PORT, LAMP_PIN);
+}
+
+void BUZZER_InterruptHandle(void) {
+
+    char temperature[5] = "T_0#";
+    temperature[2] = lm35_get_temperature() + '0';
+    comm_send_string(temperature);
+    if ((temperature[2] - '0') > 30) {
+        buzzer_control(BUZZER_ON);
+    } else {
+        buzzer_control(BUZZER_OFF);
+    }
+    delayMS(50);
 }
