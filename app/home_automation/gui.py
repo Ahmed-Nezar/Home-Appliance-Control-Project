@@ -6,8 +6,7 @@ import threading
 from datetime import datetime
 from home_automation.serial_connection import SerialConnection
 from home_automation.utils import Utils
-import time
-
+from playsound import playsound
 
 class GUI:
     def __init__(self, root):
@@ -30,6 +29,7 @@ class GUI:
         base_dir = os.path.dirname(os.path.abspath(__file__))
         base_dir = base_dir.split("home-automation")[0]
         images_dir = os.path.join(base_dir, "images")
+        self.reda_abd_3al = os.path.join(images_dir, "Alarm_For_Buzzer.mp3")
 
         self.images = {
             "door_open": ctk.CTkImage(Image.open(os.path.join(images_dir, "open_door.png")), size=(150, 150)),
@@ -123,41 +123,42 @@ class GUI:
 
     def monitor_door_temperature(self):
         while self.running:
-            # Mock temperature and door status updates
+
             previous_door_status = self.door_status
             message = SerialConnection.get_message(self.serr)
             message = message.split("#")
             temperature_messages = []                
             door_messages = []
-            # for i in message:
+            
+            if len(message) == 0:
+                continue
+
             if Utils.check_is_door(message[0]):
                 door_messages.append(message[0])
             elif Utils.check_is_temperature(message[0]):
                 temperature_messages.append(message[0])
-            try:
-                door_message = door_messages[-1]
-                if door_message == 'D':
-                    self.door_status = "Open"
-                if door_message == 'C':
-                    self.door_status = "Closed"
-                if self.door_status != previous_door_status:
-                    self.save_door_history(self.door_status)
-        
-                self.update_door_status_label()
-            except:
-                pass
-            try:
-                temperature_value = temperature_messages[-1].split("_")[1]
-                temperature_value = ord(temperature_value) - ord('0')
-                self.temperature = temperature_value
-                self.update_temperature_label()
-            except:
-                pass
+            
+            door_message = door_messages[-1]
+            if door_message == 'D':
+                self.door_status = "Open"
+            if door_message == 'C':
+                self.door_status = "Closed"
+            if self.door_status != previous_door_status:
+                self.save_door_history(self.door_status)
+    
+            self.update_door_status_label()
+
+            temperature_value = temperature_messages[-1].split("_")[1]
+            temperature_value = ord(temperature_value) - ord('0')
+            self.temperature = temperature_value
+            self.update_temperature_label()
+            
 
 
     def update_temperature_label(self):
         if self.temperature > self.hot_temp:
             self.temp_label.configure(text=f"Temperature: {self.temperature}°C\nWarning: High Temperature Detected\nTake Care Very Hot")
+            playsound(self.reda_abd_3al)
         else:
             self.temp_label.configure(text=f"Temperature: {self.temperature}°C")
 
