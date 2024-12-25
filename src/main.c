@@ -1,4 +1,4 @@
-   #include <stdio.h>
+#include <stdio.h>
 #include <stdint.h>
 #include <stdbool.h>
 #include "HAL/communication.h"
@@ -8,10 +8,24 @@
 #include "HAL/lm35.h"
 #include "HAL/buzzer.h"
 
+/* Global variables
+    * g_ui8UART0Data: The data that is received from UART0
+    * g_door: The status of the door from the switch
+    * g_lamp: The status of the lamp from the switch
+    * g_temp_threshold: The temperature threshold
+    */
 char g_ui8UART0Data;
 char g_door = DOOR_CLOSED;
 char g_lamp = LAMP_OFF;
+char g_temp_threshold = 30;
 
+/* Function prototypes 
+    * delayMS: generate a delay in milliseconds.
+    * UART0_InterruptHandle: handle the UART0 interrupt.
+    * Door_InterruptHandle: handle the door interrupt.
+    * Lamp_InterruptHandle: handle the lamp interrupt.
+    * BUZZER_InterruptHandle: handle the buzzer interrupt.
+    */
 void delayMS(uint32_t ms);
 void UART0_InterruptHandle(void);
 void Door_InterruptHandle(void);
@@ -20,14 +34,15 @@ void BUZZER_InterruptHandle(void);
 
 int main()
 {   
+    /* Initialize the peripherals */
     comm_init(UART0_InterruptHandle);
     door_init(Door_InterruptHandle);
-    relay_init();
     LAMP_init(Lamp_InterruptHandle);
-    relay_control(RELAY_1, RELAY_OFF);
-    relay_control(RELAY_2, RELAY_OFF);
     lm35_init();
     buzzer_init(BUZZER_InterruptHandle);
+    relay_init();
+    relay_control(RELAY_1, RELAY_OFF);
+    relay_control(RELAY_2, RELAY_OFF);
 
 
     char lamp_state = 0;
@@ -84,13 +99,11 @@ void UART0_InterruptHandle(void){
 
 void Door_InterruptHandle(void) {    
     delayMS(50);
-    g_door = door_status();
-    if (g_door == DOOR_CLOSED) {
+    g_door = !door_status();
+    if (g_door == DOOR_OPENED) {
         comm_send_string("D#");
-        g_door = DOOR_OPENED;
     } else {
         comm_send_string("C#");
-        g_door = DOOR_CLOSED;
     }
     GPIOIntClear(DOOR_PORT, DOOR_PIN);
 }
@@ -106,10 +119,9 @@ void BUZZER_InterruptHandle(void) {
     char temperature[5] = "T_0#";
     temperature[2] = lm35_get_temperature() + '0';
     comm_send_string(temperature);
-    if ((temperature[2] - '0') > 30) {
+    if ((temperature[2] - '0') > g_temp_threshold) {
         buzzer_control(BUZZER_ON);
     } else {
         buzzer_control(BUZZER_OFF);
     }
-    delayMS(50);
 }
