@@ -12,7 +12,14 @@ class SerialConnection:
     def init():
         port = SerialConnection.find_tiva_port()
         if port:
-            ser = serial.Serial(port, 9600, timeout=1)
+            ser = serial.Serial(
+                port, 
+                9600, 
+                timeout=1,
+                parity=serial.PARITY_NONE,
+                stopbits=serial.STOPBITS_ONE,
+                bytesize=serial.EIGHTBITS
+            )
         else:
             raise Exception("Tiva board not found")
         return ser
