@@ -6,7 +6,7 @@ import threading
 from datetime import datetime
 from home_automation.serial_connection import SerialConnection
 from home_automation.utils import Utils
-from playsound import playsound
+import pygame
 
 class GUI:
     def __init__(self, root):
@@ -158,7 +158,10 @@ class GUI:
     def update_temperature_label(self):
         if self.temperature > self.hot_temp:
             self.temp_label.configure(text=f"Temperature: {self.temperature}°C\nWarning: High Temperature Detected\nTake Care Very Hot")
-            playsound(self.reda_abd_3al)
+            pygame.mixer.init()
+            pygame.mixer.music.load(self.reda_abd_3al)
+            pygame.mixer.music.play()
+
         else:
             self.temp_label.configure(text=f"Temperature: {self.temperature}°C")
 
