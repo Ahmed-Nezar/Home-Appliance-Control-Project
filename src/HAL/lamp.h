@@ -9,10 +9,9 @@
 #include "driverlib/rom.h"
 #include "driverlib/sysctl.h"
 
-#define LAMP_PERIPH SYSCTL_PERIPH_GPIOD
-#define LAMP_PORT GPIO_PORTD_BASE
-#define LAMP_PIN GPIO_PIN_0
-#define LAMP_PIN_INT GPIO_INT_PIN_0
+#define LAMP_PERIPH SYSCTL_PERIPH_GPIOD /* The peripheral of the GPIO port that is used for Lamp */
+#define LAMP_PORT GPIO_PORTD_BASE       /* The base of the GPIO port that is used for Lamp */
+#define LAMP_PIN GPIO_PIN_0             /* The pin of the GPIO port that is used for Lamp */
 
 typedef enum {
     LAMP_OFF = 0,

@@ -9,10 +9,10 @@
 #include "driverlib/rom.h"
 #include "driverlib/sysctl.h"
 
-#define RELAY_PERIPH SYSCTL_PERIPH_GPIOF  /* The peripheral of the GPIO port that is used for Relay */
-#define RELAY_PORT GPIO_PORTF_BASE /* The base of the GPIO port that is used for Relay */
-#define RELAY_1_PIN GPIO_PIN_2 /* The pin of the GPIO port that is used for Relay 1 */
-#define RELAY_2_PIN GPIO_PIN_3 /* The pin of the GPIO port that is used for Relay 2 */
+#define RELAY_PERIPH SYSCTL_PERIPH_GPIOF    /* The peripheral of the GPIO port that is used for Relay */
+#define RELAY_PORT GPIO_PORTF_BASE          /* The base of the GPIO port that is used for Relay */
+#define RELAY_1_PIN GPIO_PIN_2              /* The pin of the GPIO port that is used for Relay 1 */
+#define RELAY_2_PIN GPIO_PIN_3              /* The pin of the GPIO port that is used for Relay 2 */
 
 typedef enum {
     RELAY_OFF = 0,

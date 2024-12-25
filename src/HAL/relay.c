@@ -9,12 +9,6 @@ void relay_init(void)
 }
 
 
-/* This function is used to control the relay state. */
-/*
-Parameters:
-    relay: The relay number that you want to control.
-    state: The state of the relay. It can be RELAY_ON or RELAY_OFF.
-*/
 void relay_control(uint8_t relay, uint8_t state)
 {
     switch (relay)
