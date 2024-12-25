@@ -8,6 +8,7 @@
 #include "driverlib/gpio.h"
 #include "driverlib/rom.h"
 #include "driverlib/sysctl.h"
+#include "driverlib/interrupt.h"
 
 #define DOOR_PERIPH SYSCTL_PERIPH_GPIOB
 #define DOOR_PORT GPIO_PORTB_BASE

@@ -13,8 +13,11 @@
 #define RELAY_PORT GPIO_PORTF_BASE
 #define RELAY_1_PIN GPIO_PIN_2
 #define RELAY_2_PIN GPIO_PIN_3
-#define RELAY_ON 1
-#define RELAY_OFF 0
+
+typedef enum {
+    RELAY_OFF = 0,
+    RELAY_ON = 1
+} RELAY_STATUS;
 #define RELAY_1 1
 #define RELAY_2 2
 

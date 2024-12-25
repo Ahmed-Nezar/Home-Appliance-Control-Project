@@ -12,9 +12,12 @@
 #define LAMP_PERIPH SYSCTL_PERIPH_GPIOD
 #define LAMP_PORT GPIO_PORTD_BASE
 #define LAMP_PIN GPIO_PIN_0
+#define LAMP_PIN_INT GPIO_INT_PIN_0
 
-#define LAMP_ON 1
-#define LAMP_OFF 0
+typedef enum {
+    LAMP_OFF = 0,
+    LAMP_ON = 1
+} LAMP_STATUS;
 
 void LAMP_init(void (*LAMP_callback)(void));
 uint8_t LAMP_status(void);

@@ -13,7 +13,6 @@ void LAMP_init(void (*LAMP_Interruptfunc)(void)) {
     SysCtlDelay(1);
     GPIOPinTypeGPIOInput(LAMP_PORT, LAMP_PIN);
     GPIOPadConfigSet(LAMP_PORT, LAMP_PIN, GPIO_STRENGTH_2MA, GPIO_PIN_TYPE_STD);
-    // enabe interrupt
     LAMP_callback = LAMP_Interruptfunc;
     GPIOIntTypeSet(LAMP_PORT, LAMP_PIN, GPIO_BOTH_EDGES);
     GPIOIntRegister(LAMP_PORT, LAMP_InterruptHandle);
