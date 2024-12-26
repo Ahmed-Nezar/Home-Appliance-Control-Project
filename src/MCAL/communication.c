@@ -27,7 +27,7 @@ void comm_init(void (*UART0_IntHandler)(void)) {
     UARTConfigSetExpClk(COMM_BASE, SysCtlClockGet(), COMM_BAUDRATE,
                         (UART_CONFIG_WLEN_8 | UART_CONFIG_STOP_ONE | UART_CONFIG_PAR_NONE));
 
-    /* Enable the UART0 receive and receive timeout interrupts. */
+    /* Enable the UART0 receive interrupts. */
     UARTIntEnable(COMM_BASE, UART_INT_RX | UART_INT_RT);
     IntEnable(COMM_INT);
     UART0_callback = UART0_IntHandler;  /* Assign the callback function to the function pointer. */
